@@ -25,6 +25,6 @@ def get_model():
     rf = RandomForestClassifier(labelCol="is_scam", featuresCol="features")
     pipeline = Pipeline(stages=[assembler, rf])
     paramGrid = ParamGridBuilder().addGrid(rf.numTrees, [10, 100]).build()
-    evaluator = BinaryClassificationEvaluator()
+    evaluator = BinaryClassificationEvaluator(labelCol="is_scam")
     cv = CrossValidator(estimator=pipeline, estimatorParamMaps=paramGrid, evaluator=evaluator, numFolds=5)
     return (pipeline, evaluator, cv)

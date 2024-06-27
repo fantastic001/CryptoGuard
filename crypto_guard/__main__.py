@@ -42,6 +42,7 @@ scrape_parser.add_argument("-n", help="Number of transactions to scrapeafter eac
 
 train_parser.add_argument("--input", help="Input file to train the model on", required=True)
 train_parser.add_argument("--output", help="Output file to save the model to", required=True)
+
 predict_parser.add_argument("--input", help="Input file to predict the likelihood of a transaction being a scam", required=True)
 
 # parse the arguments
