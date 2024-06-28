@@ -45,6 +45,7 @@ train_parser.add_argument("--input", help="Input file to train the model on", re
 train_parser.add_argument("--output", help="Output file to save the model to", required=True)
 
 predict_parser.add_argument("--input", help="Input file to predict the likelihood of a transaction being a scam", required=True)
+predict_parser.add_argument("--model", help="Model file to use for prediction", required=True)
 
 analyze_parser.add_argument("--input", help="Input file to analyze", required=True)
 
@@ -63,7 +64,7 @@ def main():
         train(spark, args.input, args.output)
     elif args.subcommand == "predict":
         from crypto_guard.predict import predict
-        predict(spark, args.input)
+        predict(spark, args.input, args.model)
     elif args.subcommand == "analyze":
         from crypto_guard.analyze import analyze
         analyze(spark, args.input)
