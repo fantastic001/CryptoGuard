@@ -35,6 +35,7 @@ subparsers = parser.add_subparsers(dest="subcommand")
 scrape_parser = subparsers.add_parser("scrape", help="Scrape bitcoin scam reports from chainabuse")
 train_parser = subparsers.add_parser("train", help="Train a model on the data")
 predict_parser = subparsers.add_parser("predict", help="Predict the likelihood of a transaction being a scam")
+analyze_parser = subparsers.add_parser("analyze", help="Analyze the data")
 
 scrape_parser.add_argument("--output", help="Output file to save the data to", required=True)
 scrape_parser.add_argument("--malicious-transactions-csv", help="CSV file containing malicious transactions", required=True)
@@ -44,6 +45,8 @@ train_parser.add_argument("--input", help="Input file to train the model on", re
 train_parser.add_argument("--output", help="Output file to save the model to", required=True)
 
 predict_parser.add_argument("--input", help="Input file to predict the likelihood of a transaction being a scam", required=True)
+
+analyze_parser.add_argument("--input", help="Input file to analyze", required=True)
 
 # parse the arguments
 args = parser.parse_args()
@@ -61,6 +64,9 @@ def main():
     elif args.subcommand == "predict":
         from crypto_guard.predict import predict
         predict(spark, args.input)
+    elif args.subcommand == "analyze":
+        from crypto_guard.analyze import analyze
+        analyze(spark, args.input)
 
     spark.stop()
 
