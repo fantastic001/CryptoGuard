@@ -1,0 +1,137 @@
+\documentclass{article}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[serbian]{babel}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+
+
+\title{Analiza Malicioznih Bitcoin Transakcija}
+\author{Stefan Nožinić}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Uvod}
+Ovaj izveštaj opisuje metodologiju i rezultate analize malicioznih Bitcoin transakcija. Korišćeni podaci sadrže atribute transakcija kao što su vrednost, vreme, visina bloka, veličina, naknada i drugi. Cilj analize je identifikacija karakteristika koje razlikuju maliciozne transakcije od legitimnih.
+
+\section{Metodologija}
+Analiza je sprovedena pomoću Python skripti koje su korišćene za scraping, treniranje modela, i analizu podataka. Skripte su podeljene u sledeće fajlove:
+\begin{itemize}
+    \item \texttt{scrape.py}: Sadrži kod za prikupljanje podataka o Bitcoin transakcijama.
+    \item \texttt{train.py}: Koristi se za treniranje modela za prepoznavanje malicioznih transakcija.
+    \item \texttt{analyze.py}: Analizira rezultate i izračunava korelacije između atributa i verovatnoće da je transakcija maliciozna.
+    \item \texttt{model.py}: Definiše strukturu modela korišćenog u analizi.
+\end{itemize}
+
+\section{Podaci}
+Podaci korišćeni u analizi sadrže sledeće atribute:
+\begin{itemize}
+    \item \texttt{value}: Vrednost transakcije
+    \item \texttt{time}: Vreme transakcije
+    \item \texttt{block\_height}: Visina bloka
+    \item \texttt{txid}: ID transakcije
+    \item \texttt{is\_scam}: Oznaka da li je transakcija maliciozna
+\end{itemize}
+U datasetu je prisutno ukupno 225364 transakcija, od kojih je 112099 označeno kao maliciozne.
+
+Podaci su preuzeti sa \texttt{bitcoin\_hacks\_2010to2013} baze i servisa \texttt{blockchair.info} i sačuvani u formatu \texttt{.csv}.
+
+\section{Korelacija Atributa sa \texttt{is\_scam}}
+Korelacije između različitih atributa i \texttt{is\_scam} su prikazane u Tabeli \ref{tab:correlation}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Atribut} & \textbf{Korelacija sa \texttt{is\_scam}} \\
+        \hline
+        value & -0.081 \\
+        time & -0.189 \\
+        block\_height & -0.175 \\
+        sequence & 0.004 \\
+        ver & -0.083 \\
+        vin\_sz & -0.068 \\
+        vout\_sz & 0.142 \\
+        size & 0.120 \\
+        weight & 0.120 \\
+        fee & 0.127 \\
+        tx\_index & 0.100 \\
+        block\_index & -0.175 \\
+        \hline
+    \end{tabular}
+    \caption{Korelacija atributa sa \texttt{is\_scam}}
+    \label{tab:correlation}
+\end{table}
+
+\section{Rezultati Analize}
+Sledeći su ključni rezultati analize:
+\begin{itemize}
+    \item Prosečna vrednost transakcija:
+    \begin{itemize}
+        \item Maliciozne: 1.714e9
+        \item Legitimne: 2.232e10
+    \end{itemize}
+    \item Prosečna naknada transakcija:
+    \begin{itemize}
+        \item Maliciozne: 2610942.90
+        \item Legitimne: 669121.40
+    \end{itemize}
+    \item Adresa sa najvećom vrednošću malicioznih transakcija:
+    \begin{itemize}
+        \item \texttt{output\_addr}: 1B8n7yaXZdRShCP75...
+        \item Vrednost: 2490935946000
+        \item Vreme: 134
+    \end{itemize}
+\end{itemize}
+
+\section{Treniranje modela}
+
+Model je treniran koristeći Random Forest algoritam sa sledećim parametrima:
+
+\begin{itemize}
+    \item bootstrap: True
+    \item maxDepth: 5
+    \item numTrees: 100
+    \item Ostali parametri su podešeni prema podrazumevanim vrednostima.
+\end{itemize}
+
+Najbolji model je postigao evaluacione rezultate:
+
+% 2col table with Mera and Vrednost 
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Mera} & \textbf{Vrednost} \\
+        \hline
+        Preciznost & 93.40\% \\
+        AUC & 94.02\% \\
+        \hline
+    \end{tabular}
+    \caption{Evaluacioni rezultati modela}
+    \label{tab:evaluation}
+\end{table}
+
+\section{Zaključak}
+
+Analiza pokazuje da postoje određene karakteristike koje mogu pomoći u identifikaciji malicioznih Bitcoin transakcija. Prosečna vrednost i naknada transakcija se značajno razlikuju između malicioznih i legitimnih transakcija. Trenirani model pokazuje visoku preciznost u klasifikaciji transakcija.
+
+Dalje unapređenje modela može uključivati analizu dodatnih atributa i optimizaciju hiperparametara.
+
+
+\end{document}
+\endinput
